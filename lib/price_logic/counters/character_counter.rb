@@ -3,13 +3,11 @@ require 'nokogiri'
 module PriceLogic
   module Counter
     class CharacterCounter < PriceLogic::PriceLogicBase
-      URL     = 'http://time.com'
-
       class << self
         private
 
         def count(page)
-          fetch_all_chars(page) % CharacterCounter::REST_OF
+          fetch_all_chars(page) % PriceLogic::Configuration.config.rest_of
         end
 
         def fetch_all_chars(page)
@@ -18,7 +16,7 @@ module PriceLogic
         end
 
         def url
-          URL
+          PriceLogic::Configuration.config.character_counter_url
         end
       end
     end

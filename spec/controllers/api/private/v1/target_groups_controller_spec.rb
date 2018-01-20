@@ -146,7 +146,7 @@ RSpec.describe Api::Private::V1::TargetGroupsController, type: :controller do
         let(:exception_message) { 'some exception' }
         before :each do
           allow_any_instance_of(TargetEvaluation).to receive(:valid?).and_return(true)
-          allow_any_instance_of(TargetEvaluation).to receive(:evaluate).and_raise(PriceLogic::ConnectionException.new(exception_message))
+          allow_any_instance_of(TargetEvaluation).to receive(:evaluate).and_raise(PriceLogic::ConnectionError.new(exception_message))
 
           @request.headers['Authorization'] = "Token #{token}"
           post :evaluate_target, params

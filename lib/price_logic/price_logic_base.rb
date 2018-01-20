@@ -1,34 +1,31 @@
 module PriceLogic
-  class ConnectionException < Exception; end
+  class ConnectionError < StandardError; end
 
   class PriceLogicBase
-    REST_OF = 100
-
     class << self
       def url
         raise NotImplementedError
       end
 
       def get_price
-        page = request(url)
-        count(page)
+        response = request(url)
+        count(response.body)
       end
 
       protected
 
       def request(url)
-        uri = URI(url)
+        uri      = URI(url)
         response = Net::HTTP.get_response(uri)
 
         case response
-          when Net::HTTPSuccess, Net::HTTPRedirection
-            return response.body
-          else
-            raise PriceLogic::ConnectionException.new("Connection exception, http status: #{response.code}")
+        when Net::HTTPSuccess, Net::HTTPRedirection
+          return response
+        else
+          raise ConnectionError, "Response error, http status: #{response.code}"
         end
-      rescue Timeout::Error, Errno::EINVAL, Errno::ECONNRESET, EOFError,
-         Net::HTTPBadResponse, Net::HTTPHeaderSyntaxError, Net::ProtocolError => e
-        raise PriceLogic::ConnectionException.new(e.message)
+      rescue Timeout::Error => e
+        raise ConnectionError, e.message
       end
     end
   end

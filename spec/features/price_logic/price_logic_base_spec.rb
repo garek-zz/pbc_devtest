@@ -7,13 +7,18 @@ RSpec.describe PriceLogic::PriceLogicBase, type: :class do
       subject { PriceLogic::PriceLogicBase }
       let(:url) { 'http://www.example.net' }
       let(:body) { 'body for http://www.example.net' }
+      let(:status) { 200 }
 
       before do
-        stub_request(:any, url).to_return(body: body, status: 200, headers: { 'Content-Length' => body.size })
+        stub_request(:any, url).to_return(body: body, status: status, headers: { 'Content-Length' => body.size })
       end
 
-      it 'returns response body' do
-        expect(subject.send(:request, url)).to eq(body)
+      it 'returns correct status' do
+        expect(subject.send(:request, url).code).to eq(status.to_s)
+      end
+
+      it 'returns correct body' do
+        expect(subject.send(:request, url).body).to eq(body)
       end
     end
 
@@ -25,8 +30,8 @@ RSpec.describe PriceLogic::PriceLogicBase, type: :class do
         stub_request(:any, url).to_return(body: "", status: 401, headers: { 'Content-Length' => 0 })
       end
 
-      it 'rasies the PriceLogic::ConnectionException' do
-        expect { subject.send(:request, url) }.to raise_error(PriceLogic::ConnectionException)
+      it 'rasies the PriceLogic::ConnectionError' do
+        expect { subject.send(:request, url) }.to raise_error(PriceLogic::ConnectionError)
       end
     end
 
@@ -38,8 +43,8 @@ RSpec.describe PriceLogic::PriceLogicBase, type: :class do
         stub_request(:any, url).to_raise(Timeout::Error)
       end
 
-      it 'raises the PriceLogic::ConnectionException' do
-        expect { subject.send(:request, url) }.to raise_error(PriceLogic::ConnectionException)
+      it 'raises the PriceLogic::ConnectionError' do
+        expect { subject.send(:request, url) }.to raise_error(PriceLogic::ConnectionError)
       end
     end
   end

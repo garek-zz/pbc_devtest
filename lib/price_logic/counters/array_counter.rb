@@ -1,8 +1,6 @@
 module PriceLogic
   module Counter
     class ArrayCounter < PriceLogic::PriceLogicBase
-      URL = 'http://openlibrary.org/search.json?q=the+lord+of+the+rings'
-
       class << self
         private
 
@@ -23,7 +21,7 @@ module PriceLogic
         end
 
         def url
-          URL
+          PriceLogic::Configuration.config.array_counter_url
         end
       end
     end

@@ -3,7 +3,7 @@ class Api::Private::V1::TargetGroupsController < Api::Private::ApiController
 
   before_filter :init_target_evaluation, only: [:evaluate_target]
 
-  rescue_from PriceLogic::ConnectionException, with: :connection_error  
+  rescue_from PriceLogic::ConnectionError, with: :connection_error  
 
   def list
     if @country
